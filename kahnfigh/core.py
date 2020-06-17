@@ -48,3 +48,7 @@ def get_config(filename):
     yaml = YAML(typ='safe')
     config = yaml.load(Path(filename))
     return config
+
+def save_config(dictionary,filename):
+    yaml = YAML(typ='safe')
+    yaml.dump(dictionary,filename)
