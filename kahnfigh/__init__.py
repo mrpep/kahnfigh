@@ -1,15 +1,26 @@
 from .core import get_path, set_path, delete_path,get_config
 from collections.abc import MutableMapping
+from pathlib import Path
 
 class Config(MutableMapping):
     """A dictionary that applies an arbitrary key-altering
        function before accessing the keys"""
     def __init__(self, path):
-        self.store = get_config(path)
+        if isinstance(path,str):
+            self.store = get_config(path)
+        elif isinstance(path,Path):
+            self.store = get_config(str(path.absolute()))
+        elif isinstance(path,dict):
+            self.store = path
+        else:
+            raise Exception('Invalid arg for Config')
+
     def __getitem__(self, key):
         results = get_path(self.store,key)
         if len(results) == 1:
             return results[0]
+        elif len(results) == 0:
+            raise Exception('Invalid key')
         else:
             return results
     def __setitem__(self, key, value):

@@ -4,6 +4,7 @@ from functools import reduce
 import operator
 from ruamel.yaml import YAML
 from pathlib import Path
+from IPython import embed
 
 def parse_path_to_dpath(config,path):
     #To do: ampliar para que pueda devolver multiples matches (no elegir correct_path[0])
