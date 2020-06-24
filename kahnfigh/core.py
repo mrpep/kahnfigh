@@ -57,3 +57,24 @@ def get_config(filename):
 def save_config(dictionary,filename):
     yaml = YAML(typ='safe')
     yaml.dump(dictionary,filename)
+
+def is_leaf_elem(elem):
+    if isinstance(elem,dict) or isinstance(elem,list):
+        return False
+    else:
+        return True
+
+def deep_to_shallow(dictionary):
+    wildpath = '*'
+    all_paths = {}
+    nested_levels = True
+
+    while nested_levels:
+        found_paths = list(dpath.util.search(dictionary,wildpath,yielded=True))
+        all_paths.update({path_i[0]: path_i[1] for path_i in found_paths if is_leaf_elem(path_i[1])})
+        if len(found_paths) > 0:
+            wildpath = wildpath + '/*'
+        else:
+            nested_levels = False
+
+    return all_paths

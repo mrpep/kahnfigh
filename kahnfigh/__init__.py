@@ -1,4 +1,4 @@
-from .core import get_path, set_path, delete_path,get_config, save_config
+from .core import get_path, set_path, delete_path,get_config, save_config, deep_to_shallow
 from collections.abc import MutableMapping
 from pathlib import Path
 
@@ -37,6 +37,8 @@ class Config(MutableMapping):
         return str(self.store)
     def save(self,path):
         save_config(self.store,path)
+    def to_shallow(self):
+        return deep_to_shallow(self.store)
 
 def load_config(path):
     return Config(path)
