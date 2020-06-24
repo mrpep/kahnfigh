@@ -28,13 +28,14 @@ def get_path(config,path):
 
 def set_path(config,path,value):
     dpath_path = parse_path_to_dpath(config,path)
-    dpaths_list = dpath.util.search(config,dpath_path,yielded=True)
-    
-    if len(list(dpaths_list)) == 0:
+    dpaths_list = list(dpath.util.search(config,dpath_path,yielded=True))
+
+    if len(dpaths_list) == 0:
         dpath.util.new(config,path,value)
     else:
         for dpath_i in dpaths_list:
             dpath.util.set(config,dpath_i[0],value)
+
 
 def nested_delete(root,items):
     items = [int(item) if item.isdigit() else item for item in items]
