@@ -13,7 +13,12 @@ Access keys using xpath syntax:
 config['Model/Architecture/Dense/units']
 ```
 
-Set new values:
+Edit existing values:
 ```
 config['Model/Architecture/Dense/units'] = 128
+```
+
+If the path doesn't exist, it will automatically create it:
+```
+config['Model/Architecture/MyNewLayer/units'] = 88
 ```
