@@ -1,4 +1,4 @@
-from .core import get_path, set_path, delete_path,get_config, save_config, deep_to_shallow
+from .core import get_path, set_path, delete_path,get_config, save_config, deep_to_shallow, recursive_replace
 from collections.abc import MutableMapping
 from pathlib import Path
 
@@ -23,22 +23,33 @@ class Config(MutableMapping):
             raise Exception('Invalid key')
         else:
             return results
+
     def __setitem__(self, key, value):
         set_path(self.store,key,value)
+
     def __delitem__(self, key):
         delete_path(self.store,key)
+
     def __iter__(self):
         return iter(self.store)
+
     def __len__(self):
         return len(self.store)
+
     def __keytransform__(self, key):
         return key
+
     def __repr__(self):
         return str(self.store)
+
     def save(self,path):
         save_config(self.store,path)
+
     def to_shallow(self):
         return deep_to_shallow(self.store)
+
+    def replace_on_symbol(self,symbol,replacement_fn):
+        recursive_replace(self.store,symbol,replacement_fn)
 
 def load_config(path):
     return Config(path)

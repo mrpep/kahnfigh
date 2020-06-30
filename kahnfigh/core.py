@@ -78,3 +78,17 @@ def deep_to_shallow(dictionary):
             nested_levels = False
 
     return all_paths
+
+def recursive_replace(tree,symbol_to_replace,replace_func):
+    if isinstance(tree,dict):
+        for k,v in tree.items():
+            if isinstance(v,str) and v.startswith(symbol_to_replace):
+                tree[k] = replace_func(v.split(symbol_to_replace)[1])
+            elif isinstance(v,dict) or isinstance(v,list):
+                recursive_replace(v,symbol_to_replace,replace_func)
+    elif isinstance(tree,list):
+        for k,v in enumerate(tree):
+            if isinstance(v,str) and v.startswith(symbol_to_replace):
+                tree[k] = replace_func(v.split(symbol_to_replace)[1])
+            elif isinstance(v,dict) or isinstance(v,list):
+                recursive_replace(v,symbol_to_replace,replace_func)
