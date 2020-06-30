@@ -23,7 +23,7 @@ If the path doesn't exist, it will automatically create it:
 config['Model/Architecture/MyNewLayer/units'] = 88
 ```
 
-Also, you may want to create custom behaviours like. For example, if we want a value to be replaced by a variable when the symbol $ appears, we can do:
+Also, you may want to create custom behaviours. For example, if we want a value to be replaced by a variable when the symbol $ appears, we can do:
 ```
 config['Model/name']
 # this returns: $model_name
