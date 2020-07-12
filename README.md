@@ -3,8 +3,8 @@
 Load a yaml file:
 
 ```
-import kahnfigh
-config = kahnfigh.load_config('sample.yaml')
+from kahnfigh import Config
+config = Config('sample.yaml')
 ```
 
 Access keys using xpath syntax:
