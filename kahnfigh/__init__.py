@@ -20,7 +20,7 @@ class Config(MutableMapping):
         if len(results) == 1:
             return results[0]
         elif len(results) == 0:
-            raise Exception('Invalid key')
+            raise KeyError('Invalid key')
         else:
             return results
 
