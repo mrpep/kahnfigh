@@ -36,7 +36,6 @@ def set_path(config,path,value):
         for dpath_i in dpaths_list:
             dpath.util.set(config,dpath_i[0],value)
 
-
 def nested_delete(root,items):
     items = [int(item) if item.isdigit() else item for item in items]
     parent = reduce(operator.getitem, items[:-1], root)
@@ -49,8 +48,14 @@ def delete_path(config,path):
         path_parts = dpath_i[0].split('/')
         nested_delete(config,path_parts)
 
-def get_config(filename):
-    yaml = YAML(typ='safe')
+def get_config(filename, special_tags = None):
+    if special_tags:
+        yaml = YAML(typ='unsafe')
+        for tag in special_tags:
+            yaml.register_class(tag)
+    else:
+        yaml = YAML(typ='safe')
+
     config = yaml.load(Path(filename))
     return config
 

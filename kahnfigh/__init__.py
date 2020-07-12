@@ -5,11 +5,11 @@ from pathlib import Path
 class Config(MutableMapping):
     """A dictionary that applies an arbitrary key-altering
        function before accessing the keys"""
-    def __init__(self, path):
+    def __init__(self, path, special_tags=None):
         if isinstance(path,str):
-            self.store = get_config(path)
+            self.store = get_config(path,special_tags=special_tags)
         elif isinstance(path,Path):
-            self.store = get_config(str(path.absolute()))
+            self.store = get_config(str(path.absolute()),special_tags=special_tags)
         elif isinstance(path,dict):
             self.store = path
         else:
