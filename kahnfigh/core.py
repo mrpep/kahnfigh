@@ -44,7 +44,7 @@ def nested_delete(root,items):
 
 def delete_path(config,path):
     dpath_path = parse_path_to_dpath(config,path)
-    dpaths_list = dpath.util.search(config,dpath_path,yielded=True)
+    dpaths_list = list(dpath.util.search(config,dpath_path,yielded=True))
     for dpath_i in dpaths_list:
         path_parts = dpath_i[0].split('/')
         nested_delete(config,path_parts)
