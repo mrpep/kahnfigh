@@ -3,8 +3,8 @@
 Load a yaml file:
 
 ```
-import kahnfigh
-config = kahnfigh.load_config('sample.yaml')
+from kahnfigh import Config
+config = Config('sample.yaml')
 ```
 
 Access keys using xpath syntax:
@@ -37,4 +37,5 @@ config.replace_on_symbol('$',lambda x: params[x])
 config['Model/name']
 #this now returns: CNN-LSTM
 config['Model/Architecture/ConvLayer/filters']
+
 #this now returns: 64
