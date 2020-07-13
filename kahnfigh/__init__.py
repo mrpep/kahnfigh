@@ -51,11 +51,11 @@ class Config(MutableMapping):
     def to_shallow(self):
         return deep_to_shallow(self.store)
 
-    def replace_on_symbol(self,symbol,replacement_fn):
-        recursive_replace(self.store,symbol,replacement_fn)
+    def replace_on_symbol(self,symbol,replacement_fn,filter_fn=None):
+        recursive_replace(self.store,symbol,replacement_fn,filter_fn)
 
-    def find_path(self,value,mode='equals',action=None,replace_value=None):
-        return find_path(self,value,mode=mode,action=action,replace_value=replace_value)
+    def find_path(self,value,mode='equals',action=None,filter_fn=None):
+        return find_path(self,value,mode=mode,action=action,filter_fn=filter_fn)
 
 def load_config(path):
     return Config(path)

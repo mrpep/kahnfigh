@@ -101,7 +101,7 @@ def deep_to_shallow(dictionary):
 
     return all_paths
 
-def recursive_replace(tree,symbol_to_replace,replace_func):
+def recursive_replace(tree,symbol_to_replace,replace_func,filter_fn):
     if isinstance(tree,dict):
         for k,v in tree.items():
             if isinstance(v,str) and v.startswith(symbol_to_replace):
@@ -115,7 +115,7 @@ def recursive_replace(tree,symbol_to_replace,replace_func):
             elif isinstance(v,dict) or isinstance(v,list):
                 recursive_replace(v,symbol_to_replace,replace_func)
 
-def find_path(config,value,mode='equals', action=None, replace_value=None):
+def find_path(config,value,mode='equals', action=None, filter_fn=None):
     if mode == 'equals':
         keys = [k for k,v in config.to_shallow().items() if v == value]
     elif mode == 'contains':
@@ -130,7 +130,7 @@ def find_path(config,value,mode='equals', action=None, replace_value=None):
                 config.pop(key)
             elif action == 'remove_substring':
                 config[key] = yaml_processor.load(config[key].replace(value,''))
-            elif action == 'replace':
-                config[key] = replace_value
+            elif callable(action):
+                config[key] = action(config[key])
 
     return keys
