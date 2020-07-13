@@ -1,4 +1,4 @@
-from .core import get_path, set_path, delete_path,get_config, save_config, deep_to_shallow, recursive_replace
+from .core import get_path, set_path, delete_path,get_config, save_config, deep_to_shallow, recursive_replace, find_path
 from collections.abc import MutableMapping
 from pathlib import Path
 
@@ -16,13 +16,16 @@ class Config(MutableMapping):
             raise Exception('Invalid arg for Config')
 
     def __getitem__(self, key):
-        results = get_path(self.store,key)
-        if len(results) == 1:
-            return results[0]
-        elif len(results) == 0:
-            raise KeyError('Invalid key')
+        if key not in self.store and '/' in key:
+            results = get_path(self.store,key)
+            if len(results) == 1:
+                return results[0]
+            elif len(results) == 0:
+                raise KeyError('Invalid key')
+            else:
+                return results
         else:
-            return results
+            return self.store[key]
 
     def __setitem__(self, key, value):
         set_path(self.store,key,value)
@@ -50,6 +53,9 @@ class Config(MutableMapping):
 
     def replace_on_symbol(self,symbol,replacement_fn):
         recursive_replace(self.store,symbol,replacement_fn)
+
+    def find_path(self,value,mode='equals',action=None,replace_value=None):
+        return find_path(self,value,mode=mode,action=action,replace_value=replace_value)
 
 def load_config(path):
     return Config(path)
