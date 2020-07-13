@@ -1,3 +1,18 @@
+import dpath.segments
+
+def leaf(thing):
+    '''
+    Return True if thing is a leaf, otherwise False.
+    leaf(thing) -> bool
+    '''
+    #leaves = (bytes, str, int, float, bool, type(None))
+
+    #return isinstance(thing, leaves)
+    leaves = (dict, list)
+    return not isinstance(thing,leaves)
+
+dpath.segments.leaf = leaf
+
 import dpath.util
 import re
 from functools import reduce
@@ -5,6 +20,8 @@ import operator
 from ruamel.yaml import YAML
 from pathlib import Path
 from IPython import embed
+from collections.abc import Iterable
+import copy
 
 def parse_path_to_dpath(config,path):
     #To do: ampliar para que pueda devolver multiples matches (no elegir correct_path[0])
@@ -97,3 +114,23 @@ def recursive_replace(tree,symbol_to_replace,replace_func):
                 tree[k] = replace_func(v.split(symbol_to_replace)[1])
             elif isinstance(v,dict) or isinstance(v,list):
                 recursive_replace(v,symbol_to_replace,replace_func)
+
+def find_path(config,value,mode='equals', action=None, replace_value=None):
+    if mode == 'equals':
+        keys = [k for k,v in config.to_shallow().items() if v == value]
+    elif mode == 'contains':
+        keys = [k for k,v in config.to_shallow().items() if isinstance(v,Iterable) and value in v]
+    elif mode == 'startswith':
+        keys = [k for k,v in config.to_shallow().items() if isinstance(v,str) and v.startswith(value)]
+
+    if action:
+        yaml_processor = YAML()
+        for key in keys:
+            if action == 'remove_value':
+                config.pop(key)
+            elif action == 'remove_substring':
+                config[key] = yaml_processor.load(config[key].replace(value,''))
+            elif action == 'replace':
+                config[key] = replace_value
+
+    return keys
