@@ -1,5 +1,6 @@
 import ruamel.yaml as yaml
 from IPython import embed
+from kahnfigh import Config
 
 class IgnorableTag:
     def __init__(self,yaml_tag):
@@ -17,3 +18,15 @@ class IgnorableTag:
     @classmethod
     def from_yaml(cls, constructor, node):
         return yaml.serialize(node).replace('\n...\n','').replace('\n','')
+
+def merge_configs(configs):
+    merged_config = {}
+    merged_kahnfigh = Config({})
+    for config in configs:
+        merged_config.update(config.to_shallow())
+
+    for k,v in merged_config.items():
+        merged_kahnfigh[k] = v
+
+    return merged_kahnfigh
+
