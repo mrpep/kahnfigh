@@ -9,7 +9,8 @@ def leaf(thing):
 
     #return isinstance(thing, leaves)
     leaves = (dict, list)
-    return not isinstance(thing,leaves)
+
+    return not (isinstance(thing,leaves) or type(thing).__name__ == 'Config')
 
 dpath.segments.leaf = leaf
 
