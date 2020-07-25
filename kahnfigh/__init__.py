@@ -5,13 +5,15 @@ from pathlib import Path
 class Config(MutableMapping):
     """A dictionary that applies an arbitrary key-altering
        function before accessing the keys"""
-    def __init__(self, path, special_tags=None):
+    def __init__(self, path=None, special_tags=None):
         if isinstance(path,str):
             self.store = get_config(path,special_tags=special_tags)
         elif isinstance(path,Path):
             self.store = get_config(str(path.absolute()),special_tags=special_tags)
         elif isinstance(path,dict):
             self.store = path
+        elif path is None:
+            self.store = {}
         else:
             raise Exception('Invalid arg for Config')
 
@@ -56,6 +58,10 @@ class Config(MutableMapping):
 
     def find_path(self,value,mode='equals',action=None,filter_fn=None):
         return find_path(self,value,mode=mode,action=action,filter_fn=filter_fn)
+
+    def dump(self,path,format='yaml'):
+        pass
+        
 
 def load_config(path):
     return Config(path)
