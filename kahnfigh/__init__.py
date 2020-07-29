@@ -44,6 +44,12 @@ class Config(MutableMapping):
     def __keytransform__(self, key):
         return key
 
+    def keys(self):
+        return self.store.keys()
+
+    def all_paths(self):
+        return self.to_shallow().keys()
+
     def __repr__(self):
         return str(self.store)
 
