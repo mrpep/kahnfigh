@@ -12,6 +12,8 @@ class Config(MutableMapping):
             self.store = get_config(str(path.absolute()),special_tags=special_tags)
         elif isinstance(path,dict):
             self.store = path
+        elif isinstance(path,Config):
+            self.store = path.store
         elif path is None:
             self.store = {}
         else:
