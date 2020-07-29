@@ -23,6 +23,7 @@ from pathlib import Path
 from IPython import embed
 from collections.abc import Iterable
 import copy
+import numpy as np
 
 def parse_path_to_dpath(config,path):
     #To do: ampliar para que pueda devolver multiples matches (no elegir correct_path[0])
@@ -77,8 +78,8 @@ def get_config(filename, special_tags = None):
     config = yaml.load(Path(filename))
     return config
 
-def save_config(dictionary,filename):
-    yaml = YAML(typ='safe')
+def save_config(dictionary,filename,mode='safe'):
+    yaml = YAML(typ=mode)
     yaml.dump(dictionary,filename)
 
 def is_leaf_elem(elem):
@@ -101,6 +102,48 @@ def deep_to_shallow(dictionary):
             nested_levels = False
 
     return all_paths
+
+def order_paths(dictionary,ordered_paths):
+    keys = list(dictionary.keys())
+    key_split = keys[0].split('/')
+    for p in range(len(key_split)):
+        #test_str = '/'.join(key_split[:p])
+        if all([k.split('/')[:p] == key_split[:p] for k in keys]):
+            common_root = '/'.join(key_split[:p])
+            depth = p
+
+    if common_root != '':
+        common_root += '/'
+
+    parents = [common_root + k.split('/')[depth] for k in keys]
+    parents = list(set(parents))
+    parent_dict = {k: [pk.partition(k)[2] for pk in keys if '/'.join(pk.split('/')[:depth+1])==k] for k in parents}
+
+    for parent,children in parent_dict.items():
+        if len(children) == 0 or (len(children) == 1 and children[0] == ''):
+            ordered_paths.append(parent)
+        elif len(children) == 1 and children[0] != '':
+            ordered_paths.append(parent+children[0])
+        elif len(children) > 1:
+            next_level_keys = [k[1:].split('/')[0] for k in children]
+            is_path_of_list = all([k.isnumeric() for k in next_level_keys])
+            if is_path_of_list:
+                for i in range(len(set(next_level_keys))):
+                    children_dict = {parent + k:dictionary[parent + k] for k in children if k.startswith('/{}'.format(i))}
+                    order_paths(children_dict,ordered_paths)    
+            else:
+                children_dict = {parent + k:dictionary[parent + k] for k in children}
+                order_paths(children_dict,ordered_paths)
+
+def shallow_to_deep(dictionary):
+    y = {}
+    ordered_paths = []
+    order_paths(dictionary,ordered_paths)
+    assert len(dictionary) == len(ordered_paths)
+
+    for path in ordered_paths:
+        set_path(y,path,dictionary[path])
+    return y
 
 def recursive_replace(tree,symbol_to_replace,replace_func,filter_fn):
     if isinstance(tree,dict):
@@ -135,3 +178,13 @@ def find_path(config,value,mode='equals', action=None, filter_fn=None):
                 config[key] = action(config[key])
 
     return keys
+
+def numpy_to_native(dictionary, log_warns=True):
+    shallow_dict = deep_to_shallow(dictionary)
+    for k,v in shallow_dict.items():
+        if isinstance(v,np.generic):
+            shallow_dict[k] = v.item()
+            if log_warns:
+                print('Warning: Converting {} from {} to native python type {}. If you are saving as yaml, consider using mode=unsafe'.format(k,type(v),type(v.item())))
+    modified_dict = shallow_to_deep(shallow_dict)
+    return modified_dict

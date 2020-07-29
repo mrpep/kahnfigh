@@ -1,4 +1,4 @@
-from .core import get_path, set_path, delete_path,get_config, save_config, deep_to_shallow, recursive_replace, find_path
+from .core import *
 from collections.abc import MutableMapping
 from pathlib import Path
 
@@ -47,8 +47,12 @@ class Config(MutableMapping):
     def __repr__(self):
         return str(self.store)
 
-    def save(self,path):
-        save_config(self.store,path)
+    def save(self,path,mode='safe'):
+        if mode == 'safe':
+            dict_to_save = numpy_to_native(self.store)
+        else:
+            dict_to_save = self.store
+        save_config(dict_to_save,path,mode)
 
     def to_shallow(self):
         return deep_to_shallow(self.store)
