@@ -95,7 +95,7 @@ def deep_to_shallow(dictionary):
 
     while nested_levels:
         found_paths = list(dpath.util.search(dictionary,wildpath,yielded=True))
-        all_paths.update({path_i[0]: path_i[1] for path_i in found_paths if is_leaf_elem(path_i[1])})
+        all_paths.update({path_i[0]: path_i[1] for path_i in found_paths if leaf(path_i[1])})
         if len(found_paths) > 0:
             wildpath = wildpath + '/*'
         else:
@@ -130,7 +130,7 @@ def order_paths(dictionary,ordered_paths):
             if is_path_of_list:
                 for i in range(len(set(next_level_keys))):
                     children_dict = {parent + k:dictionary[parent + k] for k in children if k.startswith('/{}'.format(i))}
-                    order_paths(children_dict,ordered_paths)    
+                    order_paths(children_dict,ordered_paths)
             else:
                 children_dict = {parent + k:dictionary[parent + k] for k in children}
                 order_paths(children_dict,ordered_paths)
