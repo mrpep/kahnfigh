@@ -196,3 +196,16 @@ def numpy_to_native(dictionary, log_warns=True):
                 print('Warning: Converting {} from {} to native python type {}. If you are saving as yaml, consider using mode=unsafe'.format(k,type(v),type(v.item())))
     modified_dict = shallow_to_deep(shallow_dict)
     return modified_dict
+
+def shallow_to_original_keys(dictionary,keys):
+    deep = shallow_to_deep(dictionary)
+    new_dict = {}
+    for k in keys:
+        results = get_path(deep,k)
+        if len(results) == 1:
+            new_dict[k] = results[0]
+        elif len(results) == 0:
+            raise Exception('key {} not accesible'.format(k))
+        elif len(results) > 1:
+            raise Exception('Key {} leads to one-to-many results'.format(k))
+    return new_dict
