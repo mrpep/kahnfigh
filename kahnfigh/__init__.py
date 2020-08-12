@@ -66,7 +66,7 @@ class Config(MutableMapping):
         return deep_to_shallow(self.store)
 
     def replace_on_symbol(self,symbol,replacement_fn,filter_fn=None):
-        recursive_replace(self.store,symbol,replacement_fn,filter_fn)
+        find_path(self,symbol,mode='startswith',action=lambda x: replacement_fn[x.split(symbol)[-1].lstrip()])
 
     def find_path(self,value,mode='equals',action=None,filter_fn=None):
         return find_path(self,value,mode=mode,action=action,filter_fn=filter_fn)
