@@ -20,17 +20,18 @@ class IgnorableTag:
         return yaml.serialize(node).replace('\n...\n','').replace('\n','')
 
 class YamlTag:
-    def __init__(self,yaml_tag):
+    def __init__(self,yaml_tag,special_tags=None):
         self.yaml_tag = yaml_tag
         self.__name__ = yaml_tag
+        self.special_tags = special_tags
 
-    @classmethod
-    def to_yaml(cls, representer, node):
-        return Config(node.value)
+    #@classmethod
+    def to_yaml(self, representer, node):
+        return Config(node.value, special_tags=self.special_tags)
 
-    @classmethod
-    def from_yaml(cls, constructor, node):
-        return Config(node.value)
+    #@classmethod
+    def from_yaml(self, constructor, node):
+        return Config(node.value, special_tags=self.special_tags)
 
 def merge_configs(configs):
     merged_config = {}

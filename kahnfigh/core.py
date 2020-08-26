@@ -86,6 +86,8 @@ def get_config(filename, special_tags = None):
     return config
 
 def save_config(dictionary,filename,mode='safe'):
+    if not Path(filename).parent.exists():
+        Path(filename).parent.mkdir(parents=True)
     yaml = YAML(typ=mode)
     yaml.dump(dictionary,filename)
 
