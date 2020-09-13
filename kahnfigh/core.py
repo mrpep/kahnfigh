@@ -170,8 +170,17 @@ def recursive_replace(tree,symbol_to_replace,replace_func,filter_fn):
                 recursive_replace(v,symbol_to_replace,replace_func)
 
 def find_path(config,value,mode='equals', action=None, filter_fn=None):
+    def check(v,value):
+        try:
+            if v == value:
+                return 1
+            else:
+                return 0
+        except:
+            return 0
+
     if mode == 'equals':
-        keys = [k for k,v in config.to_shallow().items() if v == value]
+        keys = [k for k,v in config.to_shallow().items() if check(v,value)]
     elif mode == 'contains':
         keys = [k for k,v in config.to_shallow().items() if isinstance(v,Iterable) and value in v]
     elif mode == 'startswith':
