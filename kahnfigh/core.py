@@ -74,13 +74,14 @@ def delete_path(config,path):
         path_parts = dpath_i[0].split('/')
         nested_delete(config,path_parts)
 
-def get_config(filename, special_tags = None):
+def get_config(filename, special_tags = None,safe=False):
+    if safe:
+      yaml = YAML(typ='safe')
+    else:
+      yaml = YAML(typ='unsafe')
     if special_tags:
-        yaml = YAML(typ='unsafe')
         for tag in special_tags:
             yaml.register_class(tag)
-    else:
-        yaml = YAML(typ='safe')
 
     config = yaml.load(Path(filename))
     return config
