@@ -20,7 +20,6 @@ from functools import reduce
 import operator
 from ruamel.yaml import YAML
 from pathlib import Path
-from IPython import embed
 from collections.abc import Iterable
 import copy
 import numpy as np

@@ -1,5 +1,4 @@
 import ruamel.yaml as yaml
-from IPython import embed
 from kahnfigh import Config
 
 class IgnorableTag:
