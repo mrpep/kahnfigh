@@ -23,6 +23,10 @@ from pathlib import Path
 from collections.abc import Iterable
 import copy
 import numpy as np
+import inspect
+
+import hashlib
+import json
 
 def extended_leaf(thing):
 
@@ -220,3 +224,38 @@ def shallow_to_original_keys(dictionary,keys):
         elif len(results) > 1:
             raise Exception('Key {} leads to one-to-many results'.format(k))
     return new_dict
+
+def hash_fn(o):
+    hashable_str = str(json.dumps(o,sort_keys=True,default=str,ensure_ascii=True))
+    str_hash = hashlib.sha1(hashable_str.encode('utf-8')).hexdigest()
+
+    return str_hash
+
+def get_hash(o):
+    DictProxyType = type(object.__dict__)
+    ## Based on jomido answer: https://stackoverflow.com/questions/5884066/hashing-a-dictionary with slight modifications
+    if type(o) == DictProxyType:
+        o2 = {}
+        for k, v in o.items():
+            if not k.startswith("__"):
+                o2[k] = v
+        o = o2  
+
+    if isinstance(o, (set, tuple, list)):
+        return tuple([get_hash(e) for e in o])
+
+    elif inspect.isfunction(o):
+        return get_hash([o.__dict__,o.__code__])
+
+    elif isinstance(o,dict):
+        new_o = copy.deepcopy(o)
+        for k, v in new_o.items():
+            new_o[k] = get_hash(v)
+        return hash_fn(tuple(frozenset(sorted(new_o.items()))))
+
+    elif type(o).__module__ != 'builtins' and inspect.isclass(type(o)):
+        return get_hash([o.__dict__,o.__name__])
+
+    else:
+        return hash_fn(o)
+    

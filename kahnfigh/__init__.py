@@ -73,6 +73,9 @@ class Config(MutableMapping):
 
     def dump(self,path,format='yaml'):
         pass
+
+    def hash(self):
+        return get_hash(self.store)
         
 
 def load_config(path):
