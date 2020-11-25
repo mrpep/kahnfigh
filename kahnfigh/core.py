@@ -251,11 +251,10 @@ def get_hash(o):
         new_o = copy.deepcopy(o)
         for k, v in new_o.items():
             new_o[k] = get_hash(v)
-        return hash_fn(tuple(frozenset(sorted(new_o.items()))))
+        return hash_fn([(k,v) for k,v in sorted(new_o.items())])
     
     elif type(o).__module__ != 'builtins' and inspect.isclass(type(o)):
         return get_hash(o.__dict__)
-
     else:
         return hash_fn(o)
     
