@@ -23,6 +23,18 @@ If the path doesn't exist, it will automatically create it:
 config['Model/Architecture/MyNewLayer/units'] = 88
 ```
 
+Moreover, you might want to find all paths matching a pattern. Use a wildcard:
+```
+config['Model/Architecture/*/units']
+```
+If there was a list in config['Model/Architecture'], then it will return all the value of key 'units' of all elements of the list which have that key
+
+You can also do some more elaborate but handy things like:
+```
+config['Model/Architecture/*/[units=88]/name']
+```
+This will return the value of key name of all elements of the list in Architecture which have the pair key:value units:88
+
 Sometimes it is really hard to work with nested dictionaries. Use to_shallow() and turn it into a depth-1 dictionary:
 ```
 shallow = config.to_shallow()
