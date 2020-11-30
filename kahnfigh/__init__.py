@@ -17,7 +17,7 @@ class Config(MutableMapping):
         elif path is None:
             self.store = {}
         else:
-            raise Exception('Invalid arg for Config')
+            raise Exception('Invalid arg for Config of type {}'.format(type(path)))
 
     def __getitem__(self, key):
         if key not in self.store and '/' in key:
