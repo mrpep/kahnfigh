@@ -76,7 +76,9 @@ class Config(MutableMapping):
 
     def hash(self):
         return get_hash(self.store)
-        
+    
+    def find_keys(self,key):
+        return find_keys(self,key)       
 
 def load_config(path):
     return Config(path)
