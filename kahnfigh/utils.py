@@ -43,3 +43,16 @@ def merge_configs(configs):
 
     return merged_kahnfigh
 
+def replace_in_config(config, what, with_this):
+    shallow_config = config.to_shallow()
+    new_config = Config({})
+    for k,v in shallow_config.items():
+        if isinstance(k,str):
+            k = k.replace(what,with_this)
+        if isinstance(v,str):
+            v = v.replace(what,with_this)
+        new_config[k] = v
+    return new_config
+
+
+
