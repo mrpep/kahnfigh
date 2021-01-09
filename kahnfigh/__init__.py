@@ -8,14 +8,19 @@ class Config(MutableMapping):
     def __init__(self, path=None, special_tags=None, safe=False):
         if isinstance(path,str):
             self.store = get_config(path,special_tags=special_tags,safe=safe)
+            self.yaml_path = Path(path)
         elif isinstance(path,Path):
             self.store = get_config(str(path.absolute()),special_tags=special_tags,safe=safe)
+            self.yaml_path = path
         elif isinstance(path,dict):
             self.store = path
+            self.yaml_path = None
         elif isinstance(path,Config):
             self.store = path.store
+            self.yaml_path = path.yaml_path
         elif path is None:
             self.store = {}
+            self.yaml_path = None
         else:
             raise Exception('Invalid arg for Config of type {}'.format(type(path)))
 
