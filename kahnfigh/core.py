@@ -258,3 +258,9 @@ def get_hash(o):
     else:
         return hash_fn(o)
     
+def find_keys(config, key):
+    shallow_config = config.to_shallow()
+    keys_with_kw = [k for k in shallow_config.keys() if key in k]
+    parent_kw = list(set([k.split(key)[0] + key for k in keys_with_kw]))
+    return parent_kw
+    
