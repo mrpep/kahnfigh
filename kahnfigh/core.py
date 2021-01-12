@@ -28,6 +28,8 @@ import inspect
 import hashlib
 import json
 
+from IPython import embed
+
 def extended_leaf(thing):
 
     leaves = (dict, list)
@@ -116,43 +118,57 @@ def deep_to_shallow(dictionary):
 
     return all_paths
 
-def order_paths(dictionary,ordered_paths):
-    keys = list(dictionary.keys())
-    if len(keys) > 0:
-        key_split = keys[0].split('/')
-        for p in range(len(key_split)):
-            #test_str = '/'.join(key_split[:p])
-            if all([k.split('/')[:p] == key_split[:p] for k in keys]):
-                common_root = '/'.join(key_split[:p])
-                depth = p
+def order_paths(keys):
 
-        if common_root != '':
-            common_root += '/'
+    def add_trailing_zeros_to_path(p):
+        return '/'.join([k if not k.isnumeric() else '{0:03d}'.format(int(k)) for k in p.split('/')])
 
-        parents = [common_root + k.split('/')[depth] for k in keys]
-        parents = list(set(parents))
-        parent_dict = {k: [pk.partition(k)[2] for pk in keys if '/'.join(pk.split('/')[:depth+1])==k] for k in parents}
+    def untrail_path(p):
+        return '/'.join([k if not k.isnumeric() else '{}'.format(int(k)) for k in p.split('/')])
 
-        for parent,children in parent_dict.items():
-            if len(children) == 0 or (len(children) == 1 and children[0] == ''):
-                ordered_paths.append(parent)
-            elif len(children) == 1 and children[0] != '':
-                ordered_paths.append(parent+children[0])
-            elif len(children) > 1:
-                next_level_keys = [k[1:].split('/')[0] for k in children]
-                is_path_of_list = all([k.isnumeric() for k in next_level_keys])
-                if is_path_of_list:
-                    for i in range(len(set(next_level_keys))):
-                        children_dict = {parent + k:dictionary[parent + k] for k in children if k.lstrip('/').split('/')[0] == str(i)}
-                        order_paths(children_dict,ordered_paths)
-                else:
-                    children_dict = {parent + k:dictionary[parent + k] for k in children}
-                    order_paths(children_dict,ordered_paths)
+    keys = [add_trailing_zeros_to_path(p) for p in keys]
+    keys.sort()
+    keys = [untrail_path(p) for p in keys]
+
+    return keys
+
+    # keys = list(dictionary.keys())
+    # if len(keys) > 0:
+    #     #Chequeo si todos los keys tienen un parent comun:
+    #     key_split = keys[0].split('/')
+    #     for p in range(len(key_split)):
+    #         #test_str = '/'.join(key_split[:p])
+    #         if all([k.split('/')[:p] == key_split[:p] for k in keys]):
+    #             common_root = '/'.join(key_split[:p])
+    #             depth = p
+
+    #     if common_root != '':
+    #         common_root += '/'
+
+    #     parents = [common_root + k.split('/')[depth] for k in keys] #Veo los hijos posibles luego del parent comun
+    #     parents = list(set(parents))
+    #     parent_dict = {k: [pk.partition(k)[2] for pk in keys if '/'.join(pk.split('/')[:depth+1])==k] for k in parents}
+
+    #     for parent,children in parent_dict.items():
+    #         if len(children) == 0 or (len(children) == 1 and children[0] == ''):
+    #             ordered_paths.append(parent)
+    #         elif len(children) == 1 and children[0] != '':
+    #             ordered_paths.append(parent+children[0])
+    #         elif len(children) > 1:
+    #             next_level_keys = [k[1:].split('/')[0] for k in children]
+    #             is_path_of_list = all([k.isnumeric() for k in next_level_keys])
+    #             if is_path_of_list:
+    #                 for i in range(len(set(next_level_keys))):
+    #                     children_dict = {parent + k:dictionary[parent + k] for k in children if k.lstrip('/').split('/')[0] == str(i)}
+    #                     order_paths(children_dict,ordered_paths)
+    #             else:
+    #                 children_dict = {parent + k:dictionary[parent + k] for k in children}
+    #                 order_paths(children_dict,ordered_paths)
 
 def shallow_to_deep(dictionary):
     y = {}
-    ordered_paths = []
-    order_paths(dictionary,ordered_paths)
+    ordered_paths = order_paths(list(dictionary.keys()))
+    #order_paths(dictionary,ordered_paths)
     assert len(dictionary) == len(ordered_paths)
 
     for path in ordered_paths:

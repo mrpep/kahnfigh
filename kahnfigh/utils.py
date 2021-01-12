@@ -1,5 +1,6 @@
 import ruamel.yaml as yaml
 from kahnfigh import Config
+from kahnfigh import order_paths, set_path
 
 class IgnorableTag:
     def __init__(self,yaml_tag):
@@ -38,8 +39,14 @@ def merge_configs(configs):
     for config in configs:
         merged_config.update(config.to_shallow())
 
-    for k,v in merged_config.items():
-        merged_kahnfigh[k] = v
+    ordered_paths = order_paths(list(merged_config.keys()))
+
+    for path in ordered_paths:
+        try:
+            set_path(merged_kahnfigh,path,merged_config[path])
+        except:
+            from IPython import embed
+            embed()
 
     return merged_kahnfigh
 
