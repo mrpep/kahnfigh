@@ -17,7 +17,10 @@ class Config(MutableMapping):
             self.yaml_path = None
         elif isinstance(path,Config):
             self.store = path.store
-            self.yaml_path = path.yaml_path
+            if hasattr(path,'yaml_path'):
+                self.yaml_path = path.yaml_path
+            else:
+                self.yaml_path = None
         elif path is None:
             self.store = {}
             self.yaml_path = None
