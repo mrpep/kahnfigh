@@ -55,9 +55,14 @@ def replace_in_config(config, what, with_this):
     new_config = Config({})
     for k,v in shallow_config.items():
         if isinstance(k,str):
-            k = k.replace(what,with_this)
+            k = k.replace(str(what),str(with_this))
         if isinstance(v,str):
-            v = v.replace(what,with_this)
+            if isinstance(with_this, str):
+                v = v.replace(what,with_this)
+            elif v == what:
+                v = with_this
+            elif (v is not what) and (what in v):
+                v = v.replace(what,str(with_this)) 
         new_config[k] = v
     return new_config
 
