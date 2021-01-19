@@ -64,6 +64,7 @@ def replace_in_config(config, what, with_this):
             elif (v is not what) and (what in v):
                 v = v.replace(what,str(with_this)) 
         new_config[k] = v
+    new_config.yaml_path = config.yaml_path
     return new_config
 
 
