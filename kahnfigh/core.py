@@ -209,12 +209,13 @@ def find_path(config,value,mode='equals', action=None, filter_fn=None):
     if action:
         yaml_processor = YAML()
         for key in keys:
-            if action == 'remove_value':
-                config.pop(key)
-            elif action == 'remove_substring':
-                config[key] = yaml_processor.load(config[key].replace(value,''))
-            elif callable(action):
-                config[key] = action(config[key])
+            if key in config:
+                if action == 'remove_value':
+                    config.pop(key)
+                elif action == 'remove_substring':
+                    config[key] = yaml_processor.load(config[key].replace(value,''))
+                elif callable(action):
+                    config[key] = action(config[key])
 
     return keys
 
@@ -268,6 +269,9 @@ def get_hash(o):
         for k, v in new_o.items():
             new_o[k] = get_hash(v)
         return hash_fn([(k,v) for k,v in sorted(new_o.items())])
+
+    elif type(o).__name__ == 'Config':
+        return get_hash(o.store)
     
     elif type(o).__module__ != 'builtins' and inspect.isclass(type(o)):
         return get_hash(o.__dict__)
