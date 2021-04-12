@@ -49,7 +49,8 @@ setup(
 
     packages=find_packages(),  # Required
     
-
+    install_requires=['dpath',
+                      'ruamel.yaml'],
     
     project_urls={  # Optional 
     },

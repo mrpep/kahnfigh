@@ -18,7 +18,7 @@ import dpath.util
 import re
 from functools import reduce
 import operator
-from ruamel.yaml import YAML
+from ruamel_yaml import YAML
 from pathlib import Path
 from collections.abc import Iterable
 import copy
