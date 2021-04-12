@@ -50,7 +50,8 @@ setup(
     packages=find_packages(),  # Required
     
     install_requires=['dpath',
-                      'ruamel.yaml'],
+                      'ruamel.yaml',
+                      'numpy'],
     
     project_urls={  # Optional 
     },
