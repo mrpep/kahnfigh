@@ -180,7 +180,8 @@ def find_path(config,value,mode='equals', action=None, filter_fn=None):
                 if action == 'remove_path':
                     config.pop(key)
                 elif action == 'remove_substring':
-                    config[key] = yaml_processor.load(config[key].replace(value,''))
+                    if isinstance(config[key],str) and value in config[key]:
+                        config[key] = yaml_processor.load(config[key].replace(value,''))
                 elif callable(action):
                     config[key] = action(config[key])
 
