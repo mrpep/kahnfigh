@@ -228,19 +228,17 @@ def get_hash(o):
 
     if isinstance(o, (set, tuple, list)):
         return tuple([get_hash(e) for e in o])
-
     elif inspect.isfunction(o):
         return get_hash([o.__dict__,o.__code__])
-
     elif isinstance(o,dict):
         new_o = copy.deepcopy(o)
         for k, v in new_o.items():
             new_o[k] = get_hash(v)
         return hash_fn([(k,v) for k,v in sorted(new_o.items())])
-
     elif type(o).__name__ == 'Config':
         return get_hash(o.store)
-    
+    elif isinstance(o, Path):
+        return get_hash(str(o))
     elif type(o).__module__ != 'builtins' and inspect.isclass(type(o)):
         return get_hash(o.__dict__)
     else:
