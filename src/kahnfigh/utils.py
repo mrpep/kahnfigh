@@ -48,8 +48,7 @@ def merge_configs(configs):
         try:
             set_path(merged_kahnfigh,path,merged_config[path])
         except:
-            from IPython import embed
-            embed()
+            raise Exception('Config merge failed')
 
     return merged_kahnfigh
 
