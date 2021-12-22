@@ -1,4 +1,7 @@
-import ruamel.yaml as yaml
+try:
+    import ruamel.yaml as yaml
+except:
+    import ruamel_yaml as yaml
 from kahnfigh import Config
 from kahnfigh import order_paths, set_path
 
